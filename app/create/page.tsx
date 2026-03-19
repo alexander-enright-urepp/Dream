@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { User } from '@supabase/supabase-js'
 
 export default function CreateDream() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [dreamLink, setDreamLink] = useState('')
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     const checkUser = async () => {
