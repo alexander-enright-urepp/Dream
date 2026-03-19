@@ -19,6 +19,11 @@ export default function Signup() {
     const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          name: name,
+        },
+      },
     })
 
     if (authError) {
@@ -27,13 +32,14 @@ export default function Signup() {
       return
     }
 
-    if (data.user) {
-      await supabase.from('users').insert({
-        id: data.user.id,
-        email,
-        name,
-      })
+    if (authError) {
+      setError(authError.message)
+      setLoading(false)
+      return
     }
+
+    // User is auto-created by trigger, wait a moment for it to complete
+    await new Promise(resolve => setTimeout(resolve, 500))
 
     setLoading(false)
     window.location.href = '/create'
