@@ -27,13 +27,7 @@ export default function Signup() {
     })
 
     if (authError) {
-      setError(authError.message)
-      setLoading(false)
-      return
-    }
-
-    if (authError) {
-      setError(authError.message)
+      setError(authError.message || 'Signup failed')
       setLoading(false)
       return
     }
