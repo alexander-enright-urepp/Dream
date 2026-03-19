@@ -21,7 +21,7 @@ export default function Explore() {
     const fetchUsers = async () => {
       const { data: usersData } = await supabase
         .from('users')
-        .select('id, name')
+        .select('id, name, created_at')
       
       if (!usersData) {
         setLoading(false)
@@ -44,7 +44,7 @@ export default function Explore() {
             .eq('user_id', user.id)
             .order('created_at', { ascending: false })
 
-          const lastActivity = proofs?.[0]?.created_at || user.created_at
+          const lastActivity = proofs?.[0]?.created_at || user.created_at || new Date().toISOString()
 
           return {
             id: user.id,
