@@ -139,6 +139,26 @@ export default function Profile() {
     if (userRow) setUserData(userRow)
   }
 
+  const handleDeleteDream = async () => {
+    if (!user || !dream) return
+    
+    if (!confirm('Are you sure you want to delete your dream? This cannot be undone.')) {
+      return
+    }
+
+    const { error } = await supabase
+      .from('dreams')
+      .delete()
+      .eq('id', dream.id)
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    setDream(null)
+  }
+
   if (loading) return <div className="min-h-screen flex items-center justify-center"></div>
 
   return (
@@ -177,7 +197,15 @@ export default function Profile() {
         {/* Dream Section */}
         {dream ? (
           <div className="bg-red-950/30 rounded-xl p-6 border border-red-800/50 mb-8">
-            <h2 className="text-2xl font-bold text-white mb-2">{dream.title}</h2>
+            <div className="flex items-start justify-between mb-2">
+              <h2 className="text-2xl font-bold text-white">{dream.title}</h2>
+              <button
+                onClick={handleDeleteDream}
+                className="text-red-400 hover:text-red-300 text-sm"
+              >
+                Delete
+              </button>
+            </div>
             {dream.description && (
               <p className="text-gray-300 mb-4">{dream.description}</p>
             )}

@@ -32,6 +32,9 @@ create policy "Users can create own dreams" on dreams
 create policy "Users can update own dreams" on dreams
   for update using (auth.uid() = user_id);
 
+create policy "Users can delete own dreams" on dreams
+  for delete using (auth.uid() = user_id);
+
 -- Proof posts table policies
 -- Allow anyone to read proof posts
 create policy "Proof posts are viewable by everyone" on proof_posts
