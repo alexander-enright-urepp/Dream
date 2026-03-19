@@ -29,11 +29,12 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-4">
+          <Link href="/explore" className="text-gray-300 hover:text-white transition-colors">
+            Explore
+          </Link>
+          
           {user ? (
             <>
-              <Link href="/explore" className="text-gray-300 hover:text-white transition-colors">
-                Explore
-              </Link>
               <Link href="/profile" className="text-gray-300 hover:text-white transition-colors">
                 Profile
               </Link>

@@ -12,6 +12,9 @@ create policy "Users can read own data" on users
 create policy "Users can update own data" on users
   for update using (auth.uid() = id);
 
+create policy "Users can update own name" on users
+  for update using (auth.uid() = id);
+
 create policy "Users can update own venmo" on users
   for update using (auth.uid() = id);
 

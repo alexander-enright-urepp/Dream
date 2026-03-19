@@ -63,6 +63,29 @@ export default function Explore() {
     fetchUsers()
   }, [])
 
+  const handleShare = async (user: UserWithDream, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const shareUrl = `${window.location.origin}/user/${user.id}`
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${user.name}'s Dream`,
+          text: user.dream_title,
+          url: shareUrl,
+        })
+      } catch (err) {
+        // User cancelled share
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(shareUrl)
+      alert('Link copied to clipboard!')
+    }
+  }
+
   if (loading) return <div className="min-h-screen flex items-center justify-center"></div>
 
   return (
@@ -75,18 +98,29 @@ export default function Explore() {
             <Link
               key={user.id}
               href={`/user/${user.id}`}
-              className="block bg-red-950/30 rounded-xl p-6 border border-red-800/50 hover:border-red-600 transition-colors"
+              className="block bg-red-950/30 rounded-xl p-6 border border-red-800/50 hover:border-red-600 transition-colors relative"
             >
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-xl font-bold text-white">{user.name}</h2>
+                <h2 className="text-xl font-bold text-white truncate">{user.dream_title}</h2>
                 <span className="text-2xl">🔥 {user.streak}</span>
               </div>
               
-              <p className="text-red-400 mb-2 truncate">{user.dream_title}</p>
+              <p className="text-gray-400 mb-2">{user.name}</p>
               
               <p className="text-sm text-gray-500">
                 Last active: {new Date(user.last_activity).toLocaleDateString()}
               </p>
+              
+              {/* Share Button */}
+              <button
+                onClick={(e) => handleShare(user, e)}
+                className="absolute bottom-4 right-4 text-gray-400 hover:text-white transition-colors"
+                title="Share"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              </button>
             </Link>
           ))}
         </div>

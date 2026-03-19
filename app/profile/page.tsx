@@ -22,6 +22,7 @@ interface ProofPost {
 
 interface UserData {
   name: string
+  email: string
   venmo_url: string | null
   created_at: string
 }
@@ -36,6 +37,7 @@ export default function Profile() {
   const [showEditModal, setShowEditModal] = useState(false)
   const [proofContent, setProofContent] = useState('')
   const [venmoUrl, setVenmoUrl] = useState('')
+  const [editName, setEditName] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export default function Profile() {
       // Fetch user data
       const { data: userRow } = await supabase
         .from('users')
-        .select('name, venmo_url, created_at')
+        .select('name, email, venmo_url, created_at')
         .eq('id', user.id)
         .single()
       
@@ -119,7 +121,7 @@ export default function Profile() {
 
     const { error } = await supabase
       .from('users')
-      .update({ venmo_url: venmoUrl })
+      .update({ name: editName, venmo_url: venmoUrl })
       .eq('id', user.id)
 
     if (error) {
@@ -132,7 +134,7 @@ export default function Profile() {
     // Refresh user data
     const { data: userRow } = await supabase
       .from('users')
-      .select('name, venmo_url, created_at')
+      .select('name, email, venmo_url, created_at')
       .eq('id', user.id)
       .single()
     
@@ -183,12 +185,15 @@ export default function Profile() {
             </a>
           )}
           
+          <div className="text-gray-400 text-sm mb-2">{userData?.email}</div>
+          
           <button
             onClick={() => {
+              setEditName(userData?.name || '')
               setVenmoUrl(userData?.venmo_url || '')
               setShowEditModal(true)
             }}
-            className="ml-2 inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+            className="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
           >
             Edit Profile
           </button>
@@ -313,6 +318,18 @@ export default function Profile() {
             <h2 className="text-2xl font-bold text-white mb-4">Edit Profile</h2>
             
             <form onSubmit={handleUpdateProfile}>
+              <div className="mb-4">
+                <label className="block text-gray-300 text-sm mb-2">Name</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Your name"
+                  className="w-full bg-black/50 border border-red-800/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600"
+                  required
+                />
+              </div>
+              
               <div className="mb-4">
                 <label className="block text-gray-300 text-sm mb-2">Venmo URL</label>
                 <input
