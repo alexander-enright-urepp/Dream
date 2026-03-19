@@ -185,7 +185,31 @@ export default function Profile() {
             </a>
           )}
           
-          <div className="text-gray-400 text-sm mb-2">{userData?.email}</div>
+          <div className="text-gray-400 text-sm mb-4">{userData?.email}</div>
+          
+          {/* Contact Info Section */}
+          <div className="bg-red-950/30 rounded-xl p-4 border border-red-800/50 mb-4 text-left">
+            <h3 className="text-sm font-bold text-gray-300 mb-2">Contact Info</h3>
+            <div className="space-y-2">
+              <div>
+                <span className="text-gray-500 text-sm">Email: </span>
+                <span className="text-white">{userData?.email}</span>
+              </div>
+              {userData?.venmo_url && (
+                <div>
+                  <span className="text-gray-500 text-sm">Venmo: </span>
+                  <a 
+                    href={userData.venmo_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    {userData.venmo_url.replace('https://account.venmo.com/u/', '@')}
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
           
           <button
             onClick={() => {
