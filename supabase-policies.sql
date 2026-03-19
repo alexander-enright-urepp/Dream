@@ -4,6 +4,10 @@ alter table dreams enable row level security;
 alter table proof_posts enable row level security;
 
 -- Users table policies
+-- Allow public to read user info (for explore page)
+create policy "Users are viewable by everyone" on users
+  for select using (true);
+
 -- Allow users to read their own data
 create policy "Users can read own data" on users
   for select using (auth.uid() = id);
