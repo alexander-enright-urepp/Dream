@@ -63,18 +63,18 @@ export default function Explore() {
     fetchUsers()
   }, [])
 
-  const handleShare = async (user: UserWithDream, e: React.MouseEvent) => {
+  const handleShare = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     
-    // Hardcoded share URL
-    const shareUrl = `https://dream-silk.vercel.app/user/${user.id}`
+    // Share explore page
+    const shareUrl = 'https://dream-silk.vercel.app/explore'
     
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${user.name}'s Dream`,
-          text: user.dream_title,
+          title: 'Explore Dreams',
+          text: 'Check out dreams on Dream',
           url: shareUrl,
         })
       } catch (err) {
@@ -114,7 +114,7 @@ export default function Explore() {
               
               {/* Share Button */}
               <button
-                onClick={(e) => handleShare(user, e)}
+                onClick={handleShare}
                 className="absolute bottom-4 right-4 text-gray-400 hover:text-white transition-colors"
                 title="Share"
               >
