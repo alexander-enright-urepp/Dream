@@ -1,24 +1,33 @@
 export function calculateStreak(posts: { created_at: string }[]): number {
   if (!posts || posts.length === 0) return 0
   
-  const dates = posts.map(p => new Date(p.created_at).toDateString())
-  const uniqueDates = [...new Set(dates)].sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+  // Get unique dates (normalized to midnight UTC)
+  const dates = posts.map(p => {
+    const date = new Date(p.created_at)
+    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())).getTime()
+  })
+  
+  const uniqueDates = [...new Set(dates)].sort((a, b) => b - a)
   
   if (uniqueDates.length === 0) return 0
   
-  let streak = 1
-  const today = new Date().toDateString()
-  const yesterday = new Date(Date.now() - 86400000).toDateString()
+  // Get today's date in UTC
+  const now = new Date()
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).getTime()
+  const yesterday = today - 86400000 // 24 hours in ms
   
-  // Check if posted today or yesterday to start streak
-  if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) {
+  // Check if most recent post is today or yesterday
+  const mostRecent = uniqueDates[0]
+  if (mostRecent !== today && mostRecent !== yesterday) {
     return 0
   }
   
+  let streak = 1
+  
   for (let i = 0; i < uniqueDates.length - 1; i++) {
-    const current = new Date(uniqueDates[i])
-    const next = new Date(uniqueDates[i + 1])
-    const diffDays = (current.getTime() - next.getTime()) / (1000 * 60 * 60 * 24)
+    const current = uniqueDates[i]
+    const next = uniqueDates[i + 1]
+    const diffDays = (current - next) / 86400000
     
     if (diffDays === 1) {
       streak++
