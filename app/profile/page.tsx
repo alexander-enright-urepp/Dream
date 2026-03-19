@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { calculateStreak } from '@/lib/utils'
 import Link from 'next/link'
+import { User } from '@supabase/supabase-js'
 
 interface Dream {
   id: string
@@ -26,7 +27,7 @@ interface UserData {
 }
 
 export default function Profile() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<User | null>(null)
   const [userData, setUserData] = useState<UserData | null>(null)
   const [dream, setDream] = useState<Dream | null>(null)
   const [proofs, setProofs] = useState<ProofPost[]>([])
