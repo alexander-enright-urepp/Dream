@@ -33,7 +33,9 @@ export default function Profile() {
   const [proofs, setProofs] = useState<ProofPost[]>([])
   const [streak, setStreak] = useState(0)
   const [showModal, setShowModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [proofContent, setProofContent] = useState('')
+  const [venmoUrl, setVenmoUrl] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -111,6 +113,32 @@ export default function Profile() {
     }
   }
 
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) return
+
+    const { error } = await supabase
+      .from('users')
+      .update({ venmo_url: venmoUrl })
+      .eq('id', user.id)
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    setShowEditModal(false)
+    
+    // Refresh user data
+    const { data: userRow } = await supabase
+      .from('users')
+      .select('name, venmo_url, created_at')
+      .eq('id', user.id)
+      .single()
+    
+    if (userRow) setUserData(userRow)
+  }
+
   if (loading) return <div className="min-h-screen flex items-center justify-center"></div>
 
   return (
@@ -134,6 +162,16 @@ export default function Profile() {
               Support My Dream
             </a>
           )}
+          
+          <button
+            onClick={() => {
+              setVenmoUrl(userData?.venmo_url || '')
+              setShowEditModal(true)
+            }}
+            className="ml-2 inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+          >
+            Edit Profile
+          </button>
         </div>
 
         {/* Dream Section */}
@@ -204,7 +242,7 @@ export default function Profile() {
         +
       </button>
 
-      {/* Modal */}
+      {/* Proof Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
           <div className="bg-red-950 rounded-xl p-6 w-full max-w-md border border-red-800">
@@ -233,6 +271,44 @@ export default function Profile() {
                   className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg transition-colors"
                 >
                   Post Proof
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+          <div className="bg-red-950 rounded-xl p-6 w-full max-w-md border border-red-800">
+            <h2 className="text-2xl font-bold text-white mb-4">Edit Profile</h2>
+            
+            <form onSubmit={handleUpdateProfile}>
+              <div className="mb-4">
+                <label className="block text-gray-300 text-sm mb-2">Venmo URL</label>
+                <input
+                  type="url"
+                  value={venmoUrl}
+                  onChange={(e) => setVenmoUrl(e.target.value)}
+                  placeholder="https://account.venmo.com/u/your-username"
+                  className="w-full bg-black/50 border border-red-800/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600"
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg transition-colors"
+                >
+                  Save
                 </button>
               </div>
             </form>
