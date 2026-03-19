@@ -67,13 +67,8 @@ export default function Explore() {
     e.preventDefault()
     e.stopPropagation()
     
-    // Use current window location, fallback to origin
-    const baseUrl = typeof window !== 'undefined' 
-      ? `${window.location.protocol}//${window.location.host}`
-      : ''
-    const shareUrl = `${baseUrl}/user/${user.id}`
-    
-    console.log('Sharing URL:', shareUrl) // Debug log
+    // Hardcoded share URL
+    const shareUrl = `https://dream-silk.vercel.app/user/${user.id}`
     
     if (navigator.share) {
       try {
@@ -84,17 +79,11 @@ export default function Explore() {
         })
       } catch (err) {
         // User cancelled share
-        console.log('Share cancelled or failed:', err)
       }
     } else {
       // Fallback: copy to clipboard
-      try {
-        await navigator.clipboard.writeText(shareUrl)
-        alert('Link copied to clipboard!')
-      } catch (err) {
-        console.error('Clipboard failed:', err)
-        alert(`Share this link: ${shareUrl}`)
-      }
+      navigator.clipboard.writeText(shareUrl)
+      alert('Link copied to clipboard!')
     }
   }
 
