@@ -10,6 +10,7 @@ export default function CreateDream() {
   const [description, setDescription] = useState('')
   const [dreamLink, setDreamLink] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
@@ -29,16 +30,18 @@ export default function CreateDream() {
     if (!user) return
 
     setLoading(true)
+    setError('')
 
-    const { error } = await supabase.from('dreams').insert({
+    const { error: insertError } = await supabase.from('dreams').insert({
       user_id: user.id,
       title,
       description: description || null,
       dream_link: dreamLink || null,
     })
 
-    if (error) {
-      console.error(error)
+    if (insertError) {
+      console.error(insertError)
+      setError(insertError.message || 'Failed to create dream. Please try again.')
       setLoading(false)
       return
     }
@@ -56,6 +59,11 @@ export default function CreateDream() {
         <p className="text-gray-400 text-center mb-8">What are you building?</p>
         
         <form onSubmit={handleSubmit} className="bg-red-950/30 rounded-xl p-8 border border-red-800/50">
+          {error && (
+            <div className="bg-red-900/50 text-red-200 p-3 rounded mb-4 text-sm">
+              {error}
+            </div>
+          )}
           <div className="mb-4">
             <label className="block text-gray-300 text-sm mb-2">Dream Title *</label>
             <input
